@@ -114,7 +114,7 @@ const Navbar = () => {
                     className="btn btn-secondary"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <FiUser /> {user?.username}
+                    <FiUser /> Ayarlar
                   </Link>
                   <button className="btn btn-primary" onClick={handleLogout}>
                     <FiLogOut /> Çıkış

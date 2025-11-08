@@ -31,7 +31,8 @@ const Settings = () => {
     },
     menu: {
       items: []
-    }
+    },
+    quick_links: []
   });
 
   useEffect(() => {
@@ -106,6 +107,39 @@ const Settings = () => {
         ...settings.menu,
         items: newItems
       }
+    });
+  };
+
+  const handleAddQuickLink = () => {
+    const newLink = {
+      label: '',
+      url: '',
+      order: settings.quick_links?.length || 0,
+      external: false
+    };
+    setSettings({
+      ...settings,
+      quick_links: [...(settings.quick_links || []), newLink]
+    });
+  };
+
+  const handleRemoveQuickLink = (index) => {
+    const newLinks = settings.quick_links.filter((_, i) => i !== index);
+    setSettings({
+      ...settings,
+      quick_links: newLinks
+    });
+  };
+
+  const handleQuickLinkChange = (index, field, value) => {
+    const newLinks = [...settings.quick_links];
+    newLinks[index] = {
+      ...newLinks[index],
+      [field]: value
+    };
+    setSettings({
+      ...settings,
+      quick_links: newLinks
     });
   };
 
@@ -642,6 +676,106 @@ const Settings = () => {
               style={{ width: '100%' }}
             >
               <FiPlus /> Yeni Menü Öğesi Ekle
+            </button>
+          </div>
+
+          {/* Hızlı Bağlantılar Yönetimi (Footer) */}
+          <div className="form-section">
+            <h3>Hızlı Bağlantılar Yönetimi (Footer)</h3>
+
+            {/* Bilgilendirme */}
+            <div style={{
+              padding: '1rem',
+              marginBottom: '1.5rem',
+              background: '#e8f5e9',
+              border: '1px solid #4caf50',
+              borderRadius: '8px',
+              color: '#2e7d32'
+            }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: '#2e7d32' }}>ℹ️ Hızlı Bağlantılar Nedir?</h4>
+              <p style={{ margin: '0', fontSize: '14px' }}>
+                Footer bölümünde görünen "Hızlı Bağlantılar" menüsünü buradan yönetebilirsiniz.
+                "Giriş Yap" linkini de buraya normal bir item olarak ekleyebilirsiniz.
+              </p>
+            </div>
+
+            <p style={{ marginBottom: '1rem', color: '#666' }}>
+              Footer'da görünecek hızlı bağlantıları ekleyin
+            </p>
+
+            {settings.quick_links?.map((link, index) => (
+              <div key={index} style={{
+                padding: '1rem',
+                marginBottom: '1rem',
+                border: '1px solid var(--border-color)',
+                borderRadius: '8px',
+                backgroundColor: 'var(--bg-secondary)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h4 style={{ margin: 0 }}>Bağlantı #{index + 1}</h4>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveQuickLink(index)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    <FiX /> Kaldır
+                  </button>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Etiket (Görünen İsim) *</label>
+                    <input
+                      type="text"
+                      value={link.label}
+                      onChange={(e) => handleQuickLinkChange(index, 'label', e.target.value)}
+                      placeholder="Örn: Ana Sayfa, Blog, Giriş Yap"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>URL / Yol *</label>
+                    <input
+                      type="text"
+                      value={link.url}
+                      onChange={(e) => handleQuickLinkChange(index, 'url', e.target.value)}
+                      placeholder="Örn: /, /blog, /login"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Sıra</label>
+                    <input
+                      type="number"
+                      value={link.order}
+                      onChange={(e) => handleQuickLinkChange(index, 'order', parseInt(e.target.value))}
+                      min="0"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={link.external || false}
+                        onChange={(e) => handleQuickLinkChange(index, 'external', e.target.checked)}
+                      />
+                      <span>Harici Link (Yeni sekmede aç)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={handleAddQuickLink}
+              className="btn btn-secondary"
+              style={{ width: '100%' }}
+            >
+              <FiPlus /> Yeni Hızlı Bağlantı Ekle
             </button>
           </div>
 

@@ -44,8 +44,19 @@ const Footer = () => {
           <div className="footer-section">
             <h4>Hızlı Bağlantılar</h4>
             <ul>
-              <li><Link to="/">Ana Sayfa</Link></li>
-              <li><Link to="/blog">Blog</Link></li>
+              {settings?.quick_links
+                ?.sort((a, b) => (a.order || 0) - (b.order || 0))
+                .map((link, index) => (
+                  <li key={index}>
+                    {link.external ? (
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link to={link.url}>{link.label}</Link>
+                    )}
+                  </li>
+                ))}
             </ul>
           </div>
 
