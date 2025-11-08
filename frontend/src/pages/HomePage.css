@@ -103,6 +103,25 @@
   margin: 0;
 }
 
+/* Middle Banner Section */
+.middle-banner {
+  margin: 3rem 0;
+}
+
+.middle-banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.middle-banner-content img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Categories Section */
 .categories-section {
   padding: 3rem 0;
@@ -129,8 +148,9 @@
   text-align: center;
   transition: all 0.3s;
   border: 2px solid var(--border-color);
-  min-width: 120px;
-  flex: 0 1 auto;
+  min-width: 160px;
+  max-width: 160px;
+  flex: 0 0 160px;
 }
 
 .category-card:hover {

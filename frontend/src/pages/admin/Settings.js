@@ -21,6 +21,11 @@ const Settings = () => {
       text_color: '#ffffff',
       overlay_opacity: 0.5
     },
+    middle_banner: {
+      enabled: false,
+      image: '',
+      alt_text: ''
+    },
     menu: {
       items: []
     }
@@ -407,6 +412,92 @@ const Settings = () => {
                 />
               </div>
             </div>
+          </div>
+
+          {/* Orta Banner Ayarları */}
+          <div className="form-section">
+            <h3>Orta Banner (Konular ve Kategoriler Arası)</h3>
+
+            <div style={{
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              background: '#fff3cd',
+              border: '1px solid #ffc107',
+              borderRadius: '8px',
+              color: '#856404',
+              fontSize: '14px'
+            }}>
+              <strong>📐 Önerilen Boyut:</strong> 1200x300 piksel (Yatay banner)
+              <br />
+              Kategoriler alanı ile aynı genişlikte görünecektir.
+            </div>
+
+            <div className="form-group">
+              <label>
+                <input
+                  type="checkbox"
+                  name="middle_banner.enabled"
+                  checked={settings.middle_banner?.enabled || false}
+                  onChange={handleChange}
+                />
+                {' '}Orta Banner'ı Göster
+              </label>
+            </div>
+
+            {settings.middle_banner?.enabled && (
+              <>
+                <div className="form-group">
+                  <label>Banner Görseli</label>
+                  {settings.middle_banner?.image ? (
+                    <div className="image-preview">
+                      <img
+                        src={settings.middle_banner.image}
+                        alt="Middle Banner"
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '200px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage('middle_banner.image')}
+                        className="btn btn-danger btn-sm"
+                        style={{ marginTop: '10px' }}
+                      >
+                        <FiTrash2 /> Görseli Kaldır
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <input
+                        type="file"
+                        id="middle-banner-upload"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 'middle_banner.image')}
+                        style={{ display: 'none' }}
+                      />
+                      <label htmlFor="middle-banner-upload" className="btn btn-secondary" style={{ cursor: 'pointer' }}>
+                        <FiUpload /> {uploading ? 'Yükleniyor...' : 'Görsel Yükle (1200x300px)'}
+                      </label>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label>Alternatif Metin (Alt Text)</label>
+                  <input
+                    type="text"
+                    name="middle_banner.alt_text"
+                    value={settings.middle_banner?.alt_text || ''}
+                    onChange={handleChange}
+                    placeholder="Banner açıklaması"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Menü Ayarları */}

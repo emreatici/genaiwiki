@@ -118,6 +118,20 @@ const HomePage = () => {
         </section>
       )}
 
+      {/* Middle Banner Section */}
+      {settings?.middle_banner?.enabled && settings?.middle_banner?.image && (
+        <section className="middle-banner">
+          <div className="container">
+            <div className="middle-banner-content">
+              <img
+                src={settings.middle_banner.image}
+                alt={settings.middle_banner.alt_text || 'Banner'}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Categories Section */}
       <section className="categories-section">
         <div className="container">
