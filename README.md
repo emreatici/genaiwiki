@@ -27,6 +27,62 @@ WordPress benzeri, basit ve güçlü bir içerik yönetim sistemi (CMS). Üretke
 
 ## 🛠️ Kurulum
 
+### 🚀 Hızlı Kurulum (Otomatik - Ubuntu)
+
+Tek komutla tüm kurulum ve yapılandırmayı yapmak için:
+
+```bash
+git clone https://github.com/emreatici/genaiwiki.git
+cd genaiwiki
+./setup.sh
+```
+
+Bu script otomatik olarak:
+- ✅ Docker ve sistem gereksinimlerini kontrol eder
+- ✅ `.env` dosyasını oluşturur ve güvenli anahtarlar üretir
+- ✅ Docker container'larını başlatır
+- ✅ MongoDB ve MinIO'nun hazır olmasını bekler
+- ✅ MinIO bucket'ını yapılandırır
+- ✅ İlk admin kullanıcısını oluşturur
+- ✅ Tüm bağlantıları test eder
+
+**Script çalıştırıldıktan sonra admin kullanıcı bilgilerini gireceksiniz ve sistem hazır olacak!**
+
+---
+
+### 🏢 Production Kurulum (Harici MongoDB ve S3)
+
+Eğer MongoDB ve S3 servisleriniz ayrı sistemlerde çalışıyorsa:
+
+```bash
+# Proje dosyalarını kopyalayın
+cd genaiwiki
+
+# .env.production dosyasını oluşturun
+cp .env.production.example .env.production
+
+# .env.production dosyasını düzenleyin ve harici servis bilgilerinizi girin
+nano .env.production
+
+# Production kurulum scriptini çalıştırın
+./setup-production.sh
+```
+
+Bu script:
+- ✅ Harici MongoDB bağlantısını test eder
+- ✅ Harici S3 bağlantısını test eder
+- ✅ S3 bucket'ını kontrol eder/oluşturur
+- ✅ Sadece Backend ve Frontend container'larını başlatır
+- ✅ İlk admin kullanıcısını oluşturur
+
+**Not:** Bu kurulum `docker-compose.prod.yml` dosyasını kullanır ve MongoDB/MinIO container'larını başlatmaz.
+
+---
+
+### 📋 Manuel Kurulum
+
+Eğer manuel kurulum yapmak isterseniz:
+
 ### 1. Repository'yi Klonlayın
 
 ```bash

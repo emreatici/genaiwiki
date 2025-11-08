@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: genaiwiki-backend
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_PUBLIC_URL: ${S3_PUBLIC_URL}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      FLASK_ENV: ${FLASK_ENV}
+      LDAP_HOST: ${LDAP_HOST}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_USER_DN: ${LDAP_USER_DN}
+      LDAP_GROUP_DN: ${LDAP_GROUP_DN}
+      LDAP_BIND_USER: ${LDAP_BIND_USER}
+      LDAP_BIND_PASSWORD: ${LDAP_BIND_PASSWORD}
+      LDAP_REQUIRED_GROUP: ${LDAP_REQUIRED_GROUP}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - genaiwiki-network
+
+  frontend:
+    build: ./frontend
+    container_name: genaiwiki-frontend
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - genaiwiki-network
+
+networks:
+  genaiwiki-network:
+    driver: bridge
