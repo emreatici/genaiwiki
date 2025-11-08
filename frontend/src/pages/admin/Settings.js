@@ -412,8 +412,27 @@ const Settings = () => {
           {/* Menü Ayarları */}
           <div className="form-section">
             <h3>Menü Yönetimi</h3>
+
+            {/* Bilgilendirme */}
+            <div style={{
+              padding: '1rem',
+              marginBottom: '1.5rem',
+              background: '#e3f2fd',
+              border: '1px solid #2196f3',
+              borderRadius: '8px',
+              color: '#1565c0'
+            }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: '#1565c0' }}>ℹ️ Menü Nasıl Yönetilir?</h4>
+              <p style={{ margin: '0 0 0.5rem 0', fontSize: '14px' }}>
+                <strong>Ana Menü Kategorileri:</strong> Kategoriler sayfasından "Ana menüde göster" işaretleyerek kategorilerinizi menüye ekleyebilirsiniz.
+              </p>
+              <p style={{ margin: '0', fontSize: '14px' }}>
+                <strong>Özel Linkler:</strong> Bu bölümden harici bağlantılar veya özel sayfalar için ek menü öğeleri ekleyebilirsiniz.
+              </p>
+            </div>
+
             <p style={{ marginBottom: '1rem', color: '#666' }}>
-              Üst menüde görünecek linkleri buradan yönetebilirsiniz.
+              Özel menü linkleri ekleyin (opsiyonel - harici bağlantılar, özel sayfalar vb.)
             </p>
 
             {settings.menu?.items?.map((item, index) => (
