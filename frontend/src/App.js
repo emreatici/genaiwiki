@@ -9,6 +9,7 @@ import './styles/global.css';
 import HomePage from './pages/HomePage';
 import ArticlePage from './pages/ArticlePage';
 import CategoryPage from './pages/CategoryPage';
+import TagPage from './pages/TagPage';
 import BlogPage from './pages/BlogPage';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/admin/Dashboard';
@@ -43,6 +44,7 @@ function AppRoutes() {
           <Route path="/" element={<HomePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="/tag/:tag" element={<TagPage />} />
           <Route path="/article/:slug" element={<ArticlePage />} />
           <Route path="/login" element={<LoginPage />} />
 

@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { categoriesAPI, articlesAPI } from '../services/api';
+import { articlesAPI } from '../services/api';
 
-const CategoryPage = () => {
-  const { slug } = useParams();
-  const [category, setCategory] = useState(null);
+const TagPage = () => {
+  const { tag } = useParams();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
-  }, [slug]);
+    loadArticles();
+  }, [tag]);
 
-  const loadData = async () => {
+  const loadArticles = async () => {
     try {
-      const [categoryRes, articlesRes] = await Promise.all([
-        categoriesAPI.getById(slug),
-        articlesAPI.getAll({ status: 'published', category: slug })
-      ]);
-      setCategory(categoryRes.data);
-      setArticles(articlesRes.data.articles);
+      const response = await articlesAPI.getAll({
+        status: 'published',
+        tag: decodeURIComponent(tag)
+      });
+      setArticles(response.data.articles);
     } catch (error) {
-      console.error('Veri yükleme hatası:', error);
+      console.error('Makaleler yüklenemedi:', error);
     } finally {
       setLoading(false);
     }
@@ -31,24 +29,12 @@ const CategoryPage = () => {
     return <div className="loading"><div className="spinner"></div></div>;
   }
 
-  if (!category) {
-    return <div className="container"><h2>Kategori bulunamadı</h2></div>;
-  }
-
-  // Kategori adını düzenle (main -> Üretken Yapay Zeka)
-  const getCategoryDisplayName = (category) => {
-    if (category.slug === 'main' || category.name === 'main') {
-      return 'Üretken Yapay Zeka';
-    }
-    return category.name;
-  };
-
   return (
-    <div className="category-page" style={{padding: '3rem 0'}}>
+    <div className="tag-page" style={{padding: '3rem 0'}}>
       <div className="container">
         <div className="blog-header">
-          <h1>{getCategoryDisplayName(category)}</h1>
-          <p>{category.description}</p>
+          <h1>#{decodeURIComponent(tag)}</h1>
+          <p>Bu etikete sahip makaleler</p>
         </div>
 
         <div className="articles-grid">
@@ -74,7 +60,7 @@ const CategoryPage = () => {
 
         {articles.length === 0 && (
           <div style={{textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)'}}>
-            Bu kategoride henüz makale bulunmuyor.
+            Bu etiketle ilgili henüz makale bulunmuyor.
           </div>
         )}
       </div>
@@ -82,4 +68,4 @@ const CategoryPage = () => {
   );
 };
 
-export default CategoryPage;
+export default TagPage;

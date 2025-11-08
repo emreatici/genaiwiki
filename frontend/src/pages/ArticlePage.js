@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { articlesAPI } from '../services/api';
 import './ArticlePage.css';
 
@@ -31,12 +31,19 @@ const ArticlePage = () => {
     return <div className="container"><h2>Makale bulunamadı</h2></div>;
   }
 
+  // Kategori adını düzenle (main -> Üretken Yapay Zeka)
+  const getCategoryDisplayName = (category) => {
+    return category === 'main' ? 'Üretken Yapay Zeka' : category;
+  };
+
   return (
     <div className="article-page">
       <div className="container">
         <article className="article">
           <header className="article-header">
-            <span className="article-category">{article.category}</span>
+            <Link to={`/category/${article.category}`} className="article-category">
+              {getCategoryDisplayName(article.category)}
+            </Link>
             <h1>{article.title}</h1>
             <div className="article-meta">
               <span>{article.author_name}</span>
@@ -60,7 +67,9 @@ const ArticlePage = () => {
               <h4>Etiketler:</h4>
               <div className="tags">
                 {article.tags.map((tag, index) => (
-                  <span key={index} className="tag">{tag}</span>
+                  <Link key={index} to={`/tag/${encodeURIComponent(tag)}`} className="tag">
+                    {tag}
+                  </Link>
                 ))}
               </div>
             </div>
