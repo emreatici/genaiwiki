@@ -19,13 +19,14 @@ def init_articles_routes(db):
     @articles_bp.route('', methods=['GET'])
     def get_articles():
         """Tüm makaleleri listele (public)"""
-        status = request.args.get('status', 'published')
+        status = request.args.get('status')  # Varsayılan değer yok, None olabilir
         category = request.args.get('category')
         page = int(request.args.get('page', 1))
         limit = int(request.args.get('limit', 20))
         skip = (page - 1) * limit
 
-        if status == 'published':
+        # Eğer status belirtilmemişse veya 'published' ise public endpoint
+        if status is None or status == 'published':
             articles = article_model.find_published(category=category, skip=skip, limit=limit)
             total = article_model.count({'status': 'published', **(({'category': category}) if category else {})})
         else:
@@ -33,7 +34,8 @@ def init_articles_routes(db):
             @token_required
             def _get_all():
                 filters = {}
-                if status:
+                # status='all' ise tüm statuslar gelsin, yoksa belirtilen status
+                if status and status != 'all':
                     filters['status'] = status
                 if category:
                     filters['category'] = category

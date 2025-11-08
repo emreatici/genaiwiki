@@ -107,7 +107,7 @@ const Navbar = () => {
             </div>
 
             <div className="navbar-actions">
-              {isAuthenticated ? (
+              {isAuthenticated && (
                 <>
                   <Link
                     to="/admin"
@@ -120,14 +120,6 @@ const Navbar = () => {
                     <FiLogOut /> Çıkış
                   </button>
                 </>
-              ) : (
-                <Link
-                  to="/login"
-                  className="btn btn-primary"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Giriş Yap
-                </Link>
               )}
             </div>
           </div>

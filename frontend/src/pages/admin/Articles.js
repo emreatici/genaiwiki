@@ -17,7 +17,11 @@ const Articles = () => {
 
   const loadArticles = async () => {
     try {
-      const response = await articlesAPI.getAll({ limit: 100 });
+      // Admin panelinde tüm makaleleri görmek için status='all' gönderiyoruz
+      // Backend bu durumda auth kontrolü yapıyor ve:
+      // - Admin için: Tüm makaleler (published + draft)
+      // - Author için: Sadece kendi makaleleri (published + draft)
+      const response = await articlesAPI.getAll({ status: 'all', limit: 100 });
       setArticles(response.data.articles);
     } catch (error) {
       toast.error('Makaleler yüklenemedi');
