@@ -74,13 +74,25 @@ if [ ! -f .env ]; then
         MONGO_PASSWORD=$(openssl rand -hex 16)
         MINIO_PASSWORD=$(openssl rand -hex 16)
 
-        # .env dosyasını güncelle
-        sed -i "s/MONGO_INITDB_ROOT_PASSWORD=.*/MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD/" .env
-        sed -i "s/admin123@mongodb/$MONGO_PASSWORD@mongodb/" .env
-        sed -i "s/MINIO_ROOT_PASSWORD=.*/MINIO_ROOT_PASSWORD=$MINIO_PASSWORD/" .env
-        sed -i "s/S3_SECRET_KEY=.*/S3_SECRET_KEY=$MINIO_PASSWORD/" .env
-        sed -i "s/SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" .env
-        sed -i "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$JWT_SECRET_KEY/" .env
+        # .env dosyasını güncelle (macOS ve Linux uyumlu)
+        # macOS'ta sed -i farklı çalışır, portable hale getir
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i "" "s/MONGO_INITDB_ROOT_PASSWORD=.*/MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD/" .env
+            sed -i "" "s/admin123@mongodb/$MONGO_PASSWORD@mongodb/" .env
+            sed -i "" "s/MINIO_ROOT_PASSWORD=.*/MINIO_ROOT_PASSWORD=$MINIO_PASSWORD/" .env
+            sed -i "" "s/S3_SECRET_KEY=.*/S3_SECRET_KEY=$MINIO_PASSWORD/" .env
+            sed -i "" "s/SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" .env
+            sed -i "" "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$JWT_SECRET_KEY/" .env
+        else
+            # Linux
+            sed -i "s/MONGO_INITDB_ROOT_PASSWORD=.*/MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD/" .env
+            sed -i "s/admin123@mongodb/$MONGO_PASSWORD@mongodb/" .env
+            sed -i "s/MINIO_ROOT_PASSWORD=.*/MINIO_ROOT_PASSWORD=$MINIO_PASSWORD/" .env
+            sed -i "s/S3_SECRET_KEY=.*/S3_SECRET_KEY=$MINIO_PASSWORD/" .env
+            sed -i "s/SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" .env
+            sed -i "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$JWT_SECRET_KEY/" .env
+        fi
 
         print_success "Güvenlik anahtarları oluşturuldu ve .env dosyasına kaydedildi"
     else

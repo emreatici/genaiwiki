@@ -66,8 +66,14 @@ if [ ! -f .env.production ]; then
         SECRET_KEY=$(openssl rand -hex 32)
         JWT_SECRET_KEY=$(openssl rand -hex 32)
 
-        sed -i "s/SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" .env.production
-        sed -i "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$JWT_SECRET_KEY/" .env.production
+        # macOS ve Linux uyumlu sed
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i "" "s/SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" .env.production
+            sed -i "" "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$JWT_SECRET_KEY/" .env.production
+        else
+            sed -i "s/SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" .env.production
+            sed -i "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$JWT_SECRET_KEY/" .env.production
+        fi
 
         print_warning "UYARI: .env.production dosyasını düzenleyin!"
         echo ""
