@@ -60,7 +60,7 @@ def init_users_routes(db):
                 return jsonify({'error': 'Invalid role. Must be admin or author'}), 400
 
             # Kullanıcı oluştur
-            user_id = user_model.create({
+            created_user = user_model.create({
                 'username': data['username'],
                 'email': data['email'],
                 'password': data['password'],
@@ -68,9 +68,8 @@ def init_users_routes(db):
                 'role': data['role']
             })
 
-            if user_id:
-                new_user = user_model.find_by_id(user_id)
-                return jsonify(serialize_user(new_user)), 201
+            if created_user:
+                return jsonify(serialize_user(created_user)), 201
             else:
                 return jsonify({'error': 'User creation failed'}), 500
 
