@@ -122,12 +122,39 @@ const HomePage = () => {
       {settings?.middle_banner?.enabled && settings?.middle_banner?.image && (
         <section className="middle-banner">
           <div className="container">
-            <div className="middle-banner-content">
-              <img
-                src={settings.middle_banner.image}
-                alt={settings.middle_banner.alt_text || 'Banner'}
-              />
-            </div>
+            {settings.middle_banner.link ? (
+              settings.middle_banner.external ? (
+                <a
+                  href={settings.middle_banner.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="middle-banner-link"
+                >
+                  <div className="middle-banner-content">
+                    <img
+                      src={settings.middle_banner.image}
+                      alt={settings.middle_banner.alt_text || 'Banner'}
+                    />
+                  </div>
+                </a>
+              ) : (
+                <Link to={settings.middle_banner.link} className="middle-banner-link">
+                  <div className="middle-banner-content">
+                    <img
+                      src={settings.middle_banner.image}
+                      alt={settings.middle_banner.alt_text || 'Banner'}
+                    />
+                  </div>
+                </Link>
+              )
+            ) : (
+              <div className="middle-banner-content">
+                <img
+                  src={settings.middle_banner.image}
+                  alt={settings.middle_banner.alt_text || 'Banner'}
+                />
+              </div>
+            )}
           </div>
         </section>
       )}

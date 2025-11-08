@@ -24,7 +24,9 @@ const Settings = () => {
     middle_banner: {
       enabled: false,
       image: '',
-      alt_text: ''
+      alt_text: '',
+      link: '',
+      external: false
     },
     menu: {
       items: []
@@ -433,14 +435,14 @@ const Settings = () => {
             </div>
 
             <div className="form-group">
-              <label>
+              <label className="checkbox-label">
                 <input
                   type="checkbox"
                   name="middle_banner.enabled"
                   checked={settings.middle_banner?.enabled || false}
                   onChange={handleChange}
                 />
-                {' '}Orta Banner'ı Göster
+                <span>Orta Banner'ı Göster</span>
               </label>
             </div>
 
@@ -495,6 +497,32 @@ const Settings = () => {
                     onChange={handleChange}
                     placeholder="Banner açıklaması"
                   />
+                </div>
+
+                <div className="form-group">
+                  <label>Banner Linki (Opsiyonel)</label>
+                  <input
+                    type="text"
+                    name="middle_banner.link"
+                    value={settings.middle_banner?.link || ''}
+                    onChange={handleChange}
+                    placeholder="Örn: /article/yeni-makale veya https://example.com"
+                  />
+                  <p style={{ marginTop: '5px', fontSize: '0.9em', color: '#666' }}>
+                    Banner'a tıklandığında gidilecek sayfa. Boş bırakılırsa tıklanamaz.
+                  </p>
+                </div>
+
+                <div className="form-group">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="middle_banner.external"
+                      checked={settings.middle_banner?.external || false}
+                      onChange={handleChange}
+                    />
+                    <span>Harici Link (Yeni sekmede aç)</span>
+                  </label>
                 </div>
               </>
             )}
