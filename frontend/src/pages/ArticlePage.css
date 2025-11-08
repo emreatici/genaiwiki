@@ -18,7 +18,7 @@
 .article-category {
   display: inline-block;
   padding: 0.5rem 1rem;
-  background: var(--primary);
+  background: var(--primary-color);
   color: white;
   border-radius: 20px;
   font-size: 0.875rem;
@@ -28,7 +28,7 @@
 }
 
 .article-category:hover {
-  background: var(--primary-dark);
+  background: var(--secondary-color);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -135,8 +135,8 @@
 }
 
 .tag:hover {
-  background: var(--primary);
-  color: white;
+  background: var(--primary-color);
+  color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
