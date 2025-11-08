@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
-import { settingsAPI } from '../services/api';
+import { settingsAPI, categoriesAPI } from '../services/api';
 import { FiMenu, FiX, FiUser, FiLogOut } from 'react-icons/fi';
 import './Navbar.css';
 
@@ -9,10 +9,12 @@ const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
+  const [mainCategories, setMainCategories] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadSettings();
+    loadMainCategories();
   }, []);
 
   const loadSettings = async () => {
@@ -21,6 +23,15 @@ const Navbar = () => {
       setSettings(response.data);
     } catch (error) {
       console.error('Ayarlar yüklenemedi:', error);
+    }
+  };
+
+  const loadMainCategories = async () => {
+    try {
+      const response = await categoriesAPI.getMainMenu();
+      setMainCategories(response.data);
+    } catch (error) {
+      console.error('Ana menü kategorileri yüklenemedi:', error);
     }
   };
 
@@ -53,6 +64,20 @@ const Navbar = () => {
             <div className="navbar-links">
               <Link to="/" onClick={() => setMobileMenuOpen(false)}>Ana Sayfa</Link>
 
+              {/* Ana menü kategorileri */}
+              {mainCategories
+                .sort((a, b) => (a.order || 0) - (b.order || 0))
+                .map((category) => (
+                  <Link
+                    key={category._id}
+                    to={`/category/${category.slug}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {category.slug === 'main' || category.name === 'main' ? 'Üretken Yapay Zeka' : category.name}
+                  </Link>
+                ))}
+
+              {/* Settings'ten gelen custom menu items */}
               {settings?.menu?.items
                 ?.sort((a, b) => (a.order || 0) - (b.order || 0))
                 .map((item, index) => (
