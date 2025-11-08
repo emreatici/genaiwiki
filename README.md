@@ -30,10 +30,53 @@ WordPress benzeri, basit ve güçlü bir içerik yönetim sistemi (CMS). Üretke
 ### 1. Repository'yi Klonlayın
 
 ```bash
-cd /Users/onuremreatici/workspace/genaiwiki
+git clone https://github.com/emreatici/genaiwiki.git
+cd genaiwiki
 ```
 
-### 2. Docker ile Başlatın
+### 2. Environment Değişkenlerini Yapılandırın
+
+`.env` dosyası oluşturun:
+
+```bash
+cp .env.example .env
+```
+
+`.env` dosyasını düzenleyin ve **kendi değerlerinizi** girin:
+
+```bash
+# MongoDB Ayarları
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=güçlü_şifreniz_buraya
+MONGO_INITDB_DATABASE=genaiwiki
+
+MONGODB_URI=mongodb://admin:güçlü_şifreniz_buraya@mongodb:27017/genaiwiki?authSource=admin
+
+# MinIO/S3 Ayarları
+MINIO_ROOT_USER=minioadmin
+MINIO_ROOT_PASSWORD=güçlü_minio_şifreniz
+
+S3_ENDPOINT=http://minio:9000
+S3_PUBLIC_URL=http://localhost:9000
+S3_ACCESS_KEY=minioadmin
+S3_SECRET_KEY=güçlü_minio_şifreniz
+S3_BUCKET=genaiwiki-media
+
+# Flask Güvenlik
+SECRET_KEY=uzun-rastgele-gizli-anahtar-buraya
+JWT_SECRET_KEY=uzun-rastgele-jwt-anahtari-buraya
+FLASK_ENV=production
+
+# Frontend
+REACT_APP_API_URL=http://localhost:5001
+```
+
+**⚠️ ÖNEMLİ:**
+- Production ortamında **mutlaka** güçlü, rastgele şifreler kullanın
+- `SECRET_KEY` ve `JWT_SECRET_KEY` en az 32 karakter olmalı
+- `.env` dosyası Git'e commit edilmez (`.gitignore`'da)
+
+### 3. Docker ile Başlatın
 
 ```bash
 docker-compose up -d
@@ -42,7 +85,7 @@ docker-compose up -d
 Bu komut şunları başlatır:
 - **MongoDB** - Port 27017
 - **MinIO** (S3) - Port 9000 (API), 9001 (Console)
-- **Backend** (Flask) - Port 5000
+- **Backend** (Flask) - Port 5001
 - **Frontend** (React) - Port 3000
 
 ### 3. İlk Kullanıcıyı Oluşturun
@@ -120,32 +163,72 @@ exit()
 
 ## 🔧 Yapılandırma
 
-### Backend Ayarları
+### Environment Değişkenleri
 
-`backend/config.py` dosyasında aşağıdaki ayarları yapabilirsiniz:
+Tüm yapılandırma `.env` dosyası üzerinden yapılır. `backend/config.py` bu değişkenleri otomatik olarak okur.
 
-```python
-# MongoDB
-MONGODB_URI = "mongodb://admin:admin123@localhost:27017/genaiwiki?authSource=admin"
+#### MongoDB Değişkenleri
 
-# S3/MinIO
-S3_ENDPOINT = "http://localhost:9000"
-S3_ACCESS_KEY = "minioadmin"
-S3_SECRET_KEY = "minioadmin123"
+| Değişken | Açıklama | Örnek |
+|----------|----------|-------|
+| `MONGO_INITDB_ROOT_USERNAME` | MongoDB admin kullanıcı adı | `admin` |
+| `MONGO_INITDB_ROOT_PASSWORD` | MongoDB admin şifresi | `SecurePass123!` |
+| `MONGO_INITDB_DATABASE` | Veritabanı adı | `genaiwiki` |
+| `MONGODB_URI` | Tam bağlantı string'i | `mongodb://admin:pass@mongodb:27017/genaiwiki?authSource=admin` |
 
-# AD/LDAP (Opsiyonel)
-LDAP_HOST = "ldap://your-ad-server.com"
-LDAP_BASE_DN = "DC=example,DC=com"
-LDAP_REQUIRED_GROUP = "ContentEditors"
+#### S3/MinIO Değişkenleri
+
+| Değişken | Açıklama | Örnek |
+|----------|----------|-------|
+| `MINIO_ROOT_USER` | MinIO kullanıcı adı | `minioadmin` |
+| `MINIO_ROOT_PASSWORD` | MinIO şifresi | `SecureMinIO123!` |
+| `S3_ENDPOINT` | S3 internal endpoint | `http://minio:9000` |
+| `S3_PUBLIC_URL` | S3 public URL (tarayıcıdan) | `http://localhost:9000` |
+| `S3_ACCESS_KEY` | S3 access key | `minioadmin` |
+| `S3_SECRET_KEY` | S3 secret key | `SecureMinIO123!` |
+| `S3_BUCKET` | Bucket adı | `genaiwiki-media` |
+
+#### Flask Değişkenleri
+
+| Değişken | Açıklama | Örnek |
+|----------|----------|-------|
+| `SECRET_KEY` | Flask secret key (min 32 char) | `abcdef1234567890...` |
+| `JWT_SECRET_KEY` | JWT secret key (min 32 char) | `xyz9876543210...` |
+| `FLASK_ENV` | Ortam | `production` veya `development` |
+
+#### LDAP/AD Değişkenleri (Opsiyonel)
+
+| Değişken | Açıklama | Örnek |
+|----------|----------|-------|
+| `LDAP_HOST` | LDAP sunucu adresi | `ldap://ad.example.com` |
+| `LDAP_BASE_DN` | Base DN | `DC=example,DC=com` |
+| `LDAP_USER_DN` | User DN | `CN=Users` |
+| `LDAP_GROUP_DN` | Group DN | `CN=Groups` |
+| `LDAP_BIND_USER` | Bind kullanıcısı | `bind_user` |
+| `LDAP_BIND_PASSWORD` | Bind şifresi | `bind_password` |
+| `LDAP_REQUIRED_GROUP` | Gerekli grup | `ContentEditors` |
+
+### Harici Ortamda Çalıştırma
+
+Kendi ortamınızda çalıştırmak için environment değişkenlerini sisteminize tanımlayın:
+
+**Linux/Mac:**
+```bash
+export MONGODB_URI="mongodb://user:pass@your-mongo-host:27017/genaiwiki"
+export S3_ENDPOINT="https://your-s3-endpoint.com"
+export S3_ACCESS_KEY="your-access-key"
+# ... diğer değişkenler
 ```
 
-### Frontend Ayarları
-
-`frontend/src/services/api.js` dosyasında API URL'sini değiştirebilirsiniz:
-
-```javascript
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+**Windows:**
+```cmd
+set MONGODB_URI=mongodb://user:pass@your-mongo-host:27017/genaiwiki
+set S3_ENDPOINT=https://your-s3-endpoint.com
+# ... diğer değişkenler
 ```
+
+**Docker Compose ile:**
+`.env` dosyasını düzenleyin, docker-compose otomatik olarak okur.
 
 ## 🏗️ Proje Yapısı
 
