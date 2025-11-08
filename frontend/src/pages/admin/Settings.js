@@ -11,6 +11,7 @@ const Settings = () => {
     site_title: '',
     site_logo: '',
     site_description: '',
+    footer_text: '',
     show_logo: true,
     show_title: true,
     banner: {
@@ -220,6 +221,20 @@ const Settings = () => {
                 onChange={handleChange}
                 rows="3"
               />
+            </div>
+
+            <div className="form-group">
+              <label>Footer Metni</label>
+              <input
+                type="text"
+                name="footer_text"
+                value={settings.footer_text || ''}
+                onChange={handleChange}
+                placeholder="© {year} GenAI Wiki. Tüm hakları saklıdır."
+              />
+              <p style={{ marginTop: '5px', fontSize: '0.9em', color: '#666' }}>
+                {'{year}'} otomatik olarak güncel yıl ile değiştirilir. Boş bırakılırsa varsayılan metin görünür.
+              </p>
             </div>
 
             <div className="form-group">

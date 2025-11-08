@@ -62,7 +62,12 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} {settings?.site_title || 'GenAI Wiki'}. Tüm hakları saklıdır.</p>
+          <p>
+            {settings?.footer_text
+              ? settings.footer_text.replace('{year}', new Date().getFullYear())
+              : `© ${new Date().getFullYear()} ${settings?.site_title || 'GenAI Wiki'}. Tüm hakları saklıdır.`
+            }
+          </p>
         </div>
       </div>
     </footer>
