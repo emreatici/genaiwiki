@@ -7,6 +7,7 @@ class Config:
 
     # S3/MinIO
     S3_ENDPOINT = os.getenv('S3_ENDPOINT', 'http://localhost:9000')
+    S3_PUBLIC_URL = os.getenv('S3_PUBLIC_URL', 'http://localhost:9000')  # Tarayıcıdan erişilebilir URL
     S3_ACCESS_KEY = os.getenv('S3_ACCESS_KEY', 'minioadmin')
     S3_SECRET_KEY = os.getenv('S3_SECRET_KEY', 'minioadmin123')
     S3_BUCKET = os.getenv('S3_BUCKET', 'genaiwiki-media')

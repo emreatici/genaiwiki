@@ -234,6 +234,7 @@ const Categories = () => {
             <table>
               <thead>
                 <tr>
+                  <th>Görsel</th>
                   <th>Kategori</th>
                   <th>Slug</th>
                   <th>Ana Menü</th>
@@ -244,6 +245,38 @@ const Categories = () => {
               <tbody>
                 {categories.map((category) => (
                   <tr key={category._id}>
+                    <td>
+                      {category.featured_image ? (
+                        <img
+                          src={category.featured_image}
+                          alt={category.name}
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            objectFit: 'cover',
+                            borderRadius: '4px'
+                          }}
+                          onError={(e) => {
+                            console.error('Resim yüklenemedi:', category.featured_image);
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '50px',
+                          height: '50px',
+                          background: '#f0f0f0',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#999',
+                          fontSize: '10px'
+                        }}>
+                          Yok
+                        </div>
+                      )}
+                    </td>
                     <td>{category.name}</td>
                     <td>{category.slug}</td>
                     <td>{category.is_main_menu ? '✓' : '-'}</td>

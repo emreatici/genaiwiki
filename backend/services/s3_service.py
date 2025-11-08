@@ -69,8 +69,8 @@ class S3Service:
                 }
             )
 
-            # URL oluştur
-            url = f"{Config.S3_ENDPOINT}/{self.bucket_name}/{unique_filename}"
+            # URL oluştur (tarayıcıdan erişilebilir public URL)
+            url = f"{Config.S3_PUBLIC_URL}/{self.bucket_name}/{unique_filename}"
 
             return {
                 'success': True,
@@ -103,8 +103,8 @@ class S3Service:
             }
 
     def get_file_url(self, s3_key):
-        """Dosya URL'sini döndür"""
-        return f"{Config.S3_ENDPOINT}/{self.bucket_name}/{s3_key}"
+        """Dosya URL'sini döndür (tarayıcıdan erişilebilir)"""
+        return f"{Config.S3_PUBLIC_URL}/{self.bucket_name}/{s3_key}"
 
     def _get_content_type(self, ext):
         """Dosya uzantısından content type belirle"""
