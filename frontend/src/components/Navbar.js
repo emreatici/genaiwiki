@@ -66,6 +66,7 @@ const Navbar = () => {
 
               {/* Ana menü kategorileri */}
               {mainCategories
+                .filter(cat => cat.slug !== 'main') // 'main' kategorisini filtrele (Ana Sayfa zaten var)
                 .sort((a, b) => (a.order || 0) - (b.order || 0))
                 .map((category) => (
                   <Link
@@ -73,7 +74,7 @@ const Navbar = () => {
                     to={`/category/${category.slug}`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {category.slug === 'main' || category.name === 'main' ? 'Üretken Yapay Zeka' : category.name}
+                    {category.name}
                   </Link>
                 ))}
 
