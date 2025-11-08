@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: genaiwiki-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: genaiwiki
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - genaiwiki-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: genaiwiki-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - genaiwiki-network
+
+  backend:
+    build: ./backend
+    container_name: genaiwiki-backend
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/genaiwiki?authSource=admin
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin123
+      S3_BUCKET: genaiwiki-media
+      SECRET_KEY: your-secret-key-change-in-production
+      FLASK_ENV: development
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb
+      - minio
+    networks:
+      - genaiwiki-network
+
+  frontend:
+    build: ./frontend
+    container_name: genaiwiki-frontend
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:5001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - genaiwiki-network
+
+volumes:
+  mongodb_data:
+  minio_data:
+
+networks:
+  genaiwiki-network:
+    driver: bridge

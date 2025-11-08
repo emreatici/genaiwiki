@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(source:*)",
+      "Bash(mkdir:*)",
+      "Bash(pip install:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(open:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose:*)",
+      "Bash(npm install:*)",
+      "Bash(python app.py:*)",
+      "Bash(curl:*)",
+      "Bash(BROWSER=none npm start)",
+      "Bash(mongosh genaiwiki:*)",
+      "Bash(python create_main_content.py:*)",
+      "Bash(python fix_image.py:*)",
+      "Bash(python check_articles.py:*)",
+      "Bash(python check_author.py:*)",
+      "Bash(docker exec:*)",
+      "Bash(git init:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
