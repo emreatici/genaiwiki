@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usersAPI } from '../../services/api';
 import { toast } from 'react-toastify';
-import { FiEdit2, FiTrash2, FiUser, FiShield } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiUser, FiShield, FiPlus } from 'react-icons/fi';
 import './AdminStyles.css';
 
 const Users = () => {
@@ -9,6 +9,15 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    full_name: '',
+    role: 'author',
+    is_active: true
+  });
 
   useEffect(() => {
     loadUsers();
@@ -25,13 +34,35 @@ const Users = () => {
     }
   };
 
+  const handleNew = () => {
+    setIsCreating(true);
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      full_name: '',
+      role: 'author',
+      is_active: true
+    });
+    setEditingUser(null);
+    setShowModal(true);
+  };
+
   const handleEdit = (user) => {
+    setIsCreating(false);
     setEditingUser({ ...user });
     setShowModal(true);
   };
 
-  const handleRoleChange = (e) => {
-    setEditingUser({ ...editingUser, role: e.target.value });
+  const handleCreate = async () => {
+    try {
+      await usersAPI.create(formData);
+      toast.success('Kullanıcı oluşturuldu');
+      setShowModal(false);
+      loadUsers();
+    } catch (error) {
+      toast.error('Oluşturma başarısız: ' + (error.response?.data?.error || error.message));
+    }
   };
 
   const handleSave = async () => {
@@ -65,10 +96,9 @@ const Users = () => {
   const getRoleBadge = (role) => {
     const roleMap = {
       admin: { text: 'Admin', className: 'role-badge-admin', icon: <FiShield /> },
-      editor: { text: 'Writer', className: 'role-badge-editor', icon: <FiEdit2 /> },
-      viewer: { text: 'Viewer', className: 'role-badge-viewer', icon: <FiUser /> }
+      author: { text: 'Yazar', className: 'role-badge-author', icon: <FiEdit2 /> }
     };
-    const roleData = roleMap[role] || roleMap.viewer;
+    const roleData = roleMap[role] || roleMap.author;
     return (
       <span className={`role-badge ${roleData.className}`}>
         {roleData.icon} {roleData.text}
@@ -84,8 +114,13 @@ const Users = () => {
     <div className="admin-page">
       <div className="container">
         <div className="admin-header">
-          <h2>Kullanıcı Yönetimi</h2>
-          <p>Kullanıcıları görüntüleyin, rol değiştirin veya silin</p>
+          <div>
+            <h2>Kullanıcı Yönetimi</h2>
+            <p>Kullanıcıları görüntüleyin, yeni kullanıcı ekleyin veya silin</p>
+          </div>
+          <button className="btn btn-primary" onClick={handleNew}>
+            <FiPlus /> Yeni Kullanıcı
+          </button>
         </div>
 
         <div className="admin-table">
@@ -142,43 +177,103 @@ const Users = () => {
           </table>
         </div>
 
-        {/* Edit Modal */}
-        {showModal && editingUser && (
+        {/* Create/Edit Modal */}
+        {showModal && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h3>Kullanıcı Düzenle</h3>
-              <div className="form-group">
-                <label>Kullanıcı Adı</label>
-                <input type="text" value={editingUser.username} disabled />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input type="text" value={editingUser.email} disabled />
-              </div>
-              <div className="form-group">
-                <label>Rol</label>
-                <select value={editingUser.role} onChange={handleRoleChange}>
-                  <option value="admin">Admin</option>
-                  <option value="editor">Writer</option>
-                  <option value="viewer">Viewer</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={editingUser.is_active}
-                    onChange={(e) => setEditingUser({ ...editingUser, is_active: e.target.checked })}
-                  />
-                  <span>Aktif</span>
-                </label>
-              </div>
+              <h3>{isCreating ? 'Yeni Kullanıcı Oluştur' : 'Kullanıcı Düzenle'}</h3>
+
+              {isCreating ? (
+                <>
+                  <div className="form-group">
+                    <label>Kullanıcı Adı *</label>
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      placeholder="kullanici_adi"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Email *</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="email@example.com"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Şifre *</label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Tam Ad *</label>
+                    <input
+                      type="text"
+                      value={formData.full_name}
+                      onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                      placeholder="Adı Soyadı"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Rol *</label>
+                    <select
+                      value={formData.role}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    >
+                      <option value="admin">Admin (Tam Yetki)</option>
+                      <option value="author">Yazar (Sadece Makale Yazma)</option>
+                    </select>
+                  </div>
+                </>
+              ) : editingUser && (
+                <>
+                  <div className="form-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" value={editingUser.username} disabled />
+                  </div>
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input type="text" value={editingUser.email} disabled />
+                  </div>
+                  <div className="form-group">
+                    <label>Rol</label>
+                    <select
+                      value={editingUser.role}
+                      onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+                    >
+                      <option value="admin">Admin (Tam Yetki)</option>
+                      <option value="author">Yazar (Sadece Makale Yazma)</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={editingUser.is_active}
+                        onChange={(e) => setEditingUser({ ...editingUser, is_active: e.target.checked })}
+                      />
+                      <span>Aktif</span>
+                    </label>
+                  </div>
+                </>
+              )}
+
               <div className="modal-actions">
                 <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
                   İptal
                 </button>
-                <button className="btn btn-primary" onClick={handleSave}>
-                  Kaydet
+                <button
+                  className="btn btn-primary"
+                  onClick={isCreating ? handleCreate : handleSave}
+                >
+                  {isCreating ? 'Oluştur' : 'Kaydet'}
                 </button>
               </div>
             </div>
@@ -187,6 +282,12 @@ const Users = () => {
       </div>
 
       <style jsx>{`
+        .admin-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 2rem;
+        }
         .role-badge {
           display: inline-flex;
           align-items: center;
@@ -200,13 +301,9 @@ const Users = () => {
           background: #fce7f3;
           color: #be185d;
         }
-        .role-badge-editor {
+        .role-badge-author {
           background: #dbeafe;
           color: #1e40af;
-        }
-        .role-badge-viewer {
-          background: #f3f4f6;
-          color: #6b7280;
         }
         .modal-overlay {
           position: fixed;

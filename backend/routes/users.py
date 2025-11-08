@@ -31,6 +31,52 @@ def init_users_routes(db):
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
+    @users_bp.route('', methods=['POST'])
+    @token_required
+    def create_user():
+        """Yeni kullanıcı oluştur (sadece admin)"""
+        # Sadece admin oluşturabilir
+        if request.current_user['role'] != 'admin':
+            return jsonify({'error': 'Unauthorized - Admin only'}), 403
+
+        try:
+            data = request.get_json()
+
+            # Gerekli alanlar
+            required_fields = ['username', 'email', 'password', 'full_name', 'role']
+            for field in required_fields:
+                if field not in data:
+                    return jsonify({'error': f'Missing required field: {field}'}), 400
+
+            # Kullanıcı adı ve email kontrolü
+            if user_model.find_by_username(data['username']):
+                return jsonify({'error': 'Username already exists'}), 400
+
+            if user_model.find_by_email(data['email']):
+                return jsonify({'error': 'Email already exists'}), 400
+
+            # Role kontrolü
+            if data['role'] not in ['admin', 'author']:
+                return jsonify({'error': 'Invalid role. Must be admin or author'}), 400
+
+            # Kullanıcı oluştur
+            user_id = user_model.create({
+                'username': data['username'],
+                'email': data['email'],
+                'password': data['password'],
+                'full_name': data['full_name'],
+                'role': data['role']
+            })
+
+            if user_id:
+                new_user = user_model.find_by_id(user_id)
+                return jsonify(serialize_user(new_user)), 201
+            else:
+                return jsonify({'error': 'User creation failed'}), 500
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
     @users_bp.route('/<user_id>', methods=['GET'])
     @token_required
     def get_user(user_id):

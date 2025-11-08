@@ -38,6 +38,10 @@ def init_articles_routes(db):
                 if category:
                     filters['category'] = category
 
+                # Eğer author ise, sadece kendi makalelerini göster
+                if request.current_user['role'] == 'author':
+                    filters['author_id'] = ObjectId(request.current_user['user_id'])
+
                 articles = article_model.find_all(filters=filters, skip=skip, limit=limit)
                 total = article_model.count(filters)
 
@@ -90,6 +94,10 @@ def init_articles_routes(db):
             data['author_id'] = request.current_user['user_id']
             data['author_name'] = request.current_user['username']
 
+            # Eğer author ise, status otomatik olarak "draft" yapılır
+            if request.current_user['role'] == 'author':
+                data['status'] = 'draft'
+
             article = article_model.create(data)
             return jsonify(serialize_article(article)), 201
 
@@ -117,6 +125,10 @@ def init_articles_routes(db):
                 # author_id yoksa, sadece admin editleyebilir
                 if request.current_user['role'] != 'admin':
                     return jsonify({'error': 'Unauthorized - Only admins can edit articles without author'}), 403
+
+            # Eğer author ise, status değiştiremez (sadece admin değiştirebilir)
+            if request.current_user['role'] == 'author' and 'status' in data:
+                data.pop('status')  # Status değişikliğini engelle
 
             success = article_model.update(article_id, data)
 

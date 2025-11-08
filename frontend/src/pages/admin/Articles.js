@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { articlesAPI } from '../../services/api';
+import { useAuth } from '../../services/AuthContext';
 import { toast } from 'react-toastify';
-import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiCheckCircle } from 'react-icons/fi';
 import './AdminStyles.css';
 
 const Articles = () => {
+  const { user } = useAuth();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +35,17 @@ const Articles = () => {
       loadArticles();
     } catch (error) {
       toast.error('Silme işlemi başarısız');
+    }
+  };
+
+  const handleStatusToggle = async (article) => {
+    const newStatus = article.status === 'published' ? 'draft' : 'published';
+    try {
+      await articlesAPI.update(article._id, { status: newStatus });
+      toast.success(`Makale ${newStatus === 'published' ? 'yayınlandı' : 'taslağa alındı'}`);
+      loadArticles();
+    } catch (error) {
+      toast.error('Durum değiştirilemedi');
     }
   };
 
@@ -76,6 +89,15 @@ const Articles = () => {
                   <td>{new Date(article.created_at).toLocaleDateString('tr-TR')}</td>
                   <td>
                     <div className="table-actions">
+                      {user?.role === 'admin' && (
+                        <button
+                          onClick={() => handleStatusToggle(article)}
+                          title={article.status === 'published' ? 'Taslağa Al' : 'Yayınla'}
+                          style={{ color: article.status === 'published' ? '#10b981' : '#6b7280' }}
+                        >
+                          <FiCheckCircle />
+                        </button>
+                      )}
                       <Link to={`/admin/articles/edit/${article._id}`}>
                         <button title="Düzenle">
                           <FiEdit2 />
